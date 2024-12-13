@@ -1,28 +1,31 @@
-name: Build for iOS
-on: [workflow_dispatch]
-permissions:
-  contents: write
+run-name: Build for iOS
+on:
+  workflow_dispatch:
+
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository Code 🛒
-        uses: actions/checkout@v4
-      - name: Installing Dependencies 🌐
-        run: |
-          echo "Starting.."
-          npm install
-          echo "Done!"
-      - name: Building app 🛠
-        run: |
-          npm run ios
-          ls -a
-      - name: Pushing to "build" branch ⚙
-        run: |
-          git config --global user.name "NullClock"
-          git config --global user.email "146401816+NullClock@users.noreply.github.com"
-          git switch build
-          git commit -am "Build for iOS"
-          git push
-      - name: Done! ✅
-          
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          cache: yarn
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🚀 Build app
+        run: eas build --non-interactive
+      
+      - name: ✅ Done
+        run: echo "Done!"

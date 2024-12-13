@@ -1,0 +1,28 @@
+name: Build for iOS
+on: [workflow_dispatch]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository Code 🛒
+        uses: actions/checkout@v4
+      - name: Installing Dependencies 🌐
+        run: |
+          echo "Starting.."
+          npm install
+          echo "Done!"
+      - name: Building app 🛠
+        run: |
+          npm run ios
+          ls -a
+      - name: Pushing to "build" branch ⚙
+        run: |
+          git config --global user.name "NullClock"
+          git config --global user.email "146401816+NullClock@users.noreply.github.com"
+          git switch build
+          git commit -am "Build for iOS"
+          git push
+      - name: Done! ✅
+          
